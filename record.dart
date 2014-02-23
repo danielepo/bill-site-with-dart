@@ -9,8 +9,8 @@ class Record{
     this.cost = 0.0;
   }
   Record.setter(this.cathegory, this.cost, this.date, [this.subCathegory=""]){
-    var matcher = new RegExp('/./');
-    if(this.date != "" && matcher.hasMatch(this.date)){
+    var matcher = new RegExp(r'^(0[1-9]|[1-2]\d{1}|3[0-1])-(0[1-9]|1[0-2])-(19|20)\d{2}$');
+    if(this.date != "" && !this.date.contains(matcher)){
       throw new Exception();
     }
   }

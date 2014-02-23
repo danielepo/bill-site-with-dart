@@ -3,6 +3,10 @@ import "dbinterface.dart";
 import "record.dart";
 void main(){
   DbInterface db;
+  skip_test('regexp',(){
+    var numbers= new RegExp(r'(^(0[1-9]|[1-2]\d{1}|3[0-1])-(0[1-9]|1[0-2])-(19|20)\d{2}$)?' );
+    assert("12-12-2033".contains(numbers));
+  });
   group('Data Collector Tests', () {
     test('Empty returns Empty Map',(){
       Record record = new Record();
