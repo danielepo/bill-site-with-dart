@@ -35,11 +35,7 @@ class DbInterface{
   Future getByDate(DateTime date,[var wholeMonth = false]){
     Future returnedList = null;
     if(wholeMonth){
-      var start = new DateTime(date.year, date.month);
-      var newYear = date.month==12?date.year + 1: date.year;
-      var newMonth = date.month==12? 1: date.month +1;
-      var end = new DateTime(newYear, newMonth);
-      returnedList = _database.find({"Date":{"\$gte": start, "\$lt": end}}).toList();
+      returnedList = _database.find({"Date":{"\$gte": this._getThisMonth(date), "\$lt": this._getNextMonth(date)}}).toList();
     }
     else{
       var start = date;
@@ -47,6 +43,16 @@ class DbInterface{
     }
     return returnedList;
   }
+  DateTime _getNextMonth(DateTime date){
+    var nextYear = date.month==12?date.year + 1: date.year;
+    var nextMonth = date.month==12? 1: date.month +1;
+          
+    return new DateTime(nextYear, nextMonth);
+  }
+  DateTime _getThisMonth(DateTime date){
+    return new DateTime(date.year, date.month);
+  }
+
   Future getByDateRange(DateTime dateLower, DateTime dateHigher){
     return _database.find({"Date":{"\$gte": dateLower, "\$lte": dateHigher}}).toList();
   }
