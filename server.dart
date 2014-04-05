@@ -10,7 +10,7 @@ import 'package:route/server.dart' show Router;
 import 'package:logging/logging.dart' show Logger, Level, LogRecord;
 
 final Logger log = new Logger('DartiverseSearch');
-
+DbInterface db ;
 
 /**
  * Handle an established [WebSocket] connection.
@@ -30,7 +30,15 @@ void handleWebSocket(WebSocket webSocket) {
       var request = json['request'];
       switch (request) {
         case 'search':
-
+          db.insert([new Record.setter(
+              json['cat'], 
+              json['cost'], 
+              new DateTime(json['year'], json['month'], json['day']),
+              json['subcat'])])
+            .then((_) => db.countCollection())
+            .then((val){log.info(val);})
+            .catchError((e){log.warning(e.toString());});
+          log.info(json['input']);
           break;
 
         default:
@@ -54,6 +62,8 @@ bool doesBuildPathExists(String buildPath){
 }
 void main() {
   // Set up logger.
+  
+   db = new DbInterface("127.0.0.1","test1");
   setUpLogger();
 
   var buildPath = getBuildPath();
@@ -75,16 +85,16 @@ void main() {
     router.serve('/ws')
       .transform(new WebSocketTransformer())
       .listen(handleWebSocket);
-
     // Set up default handler. This will serve files from our 'build' directory.
-    var virutalDirectory = new http_server.VirtualDirectory(buildPath)
+    var virutalDirectory = new http_server.VirtualDirectory(buildPath);
     // Disable jail root, as packages are local symlinks.
-    ..jailRoot = false
-    ..allowDirectoryListing = true;
-    
+    virutalDirectory.jailRoot = false;
+    virutalDirectory.allowDirectoryListing = true;
     virutalDirectory.directoryHandler = (dir, request) {
       // Redirect directory requests to index.html files.
+
       var indexUri = new Uri.file(dir.path).resolve('index.html');
+
       virutalDirectory.serveFile(new File(indexUri.toFilePath()), request);
     };
 
@@ -102,7 +112,8 @@ void main() {
     // JavaScript files but does not copy the Dart files, which are
     // needed for the Dartium browser.
     router.serve("/client.dart").listen((request) {
-      Uri clientScript = Platform.script.resolve("../web/client.dart");
+      Uri clientScript = Platform.script.resolve("./web/client.dart");
+
       virutalDirectory.serveFile(new File(clientScript.toFilePath()), request);
     });
   });
