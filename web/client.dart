@@ -6,7 +6,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
 
-
+void main() {
+  var client = new Client();
+}
 class Client {
   static const Duration RECONNECT_DELAY = const Duration(milliseconds: 500);
 
@@ -28,14 +30,14 @@ class Client {
 
   Client() {
     submit.onClick.listen((e) {
-      insertExpence();
+      insertTransaction();
       //searchElement.value = '';
     });
     dateElement.valueAsDate = new DateTime.now();
     monthElement.valueAsDate = new DateTime.now();
     connect();
   }
-  void insertExpence() {
+  void insertTransaction() {
     if (cathegoryElement.value.isEmpty){
       return; 
     }
@@ -95,13 +97,13 @@ class Client {
   void onMessage(data) {
     var json = JSON.decode(data);
     var response = json['response'];
+    print("response: '$response'");
     switch (response) {
-      case 'searchResult':
-        addResult(json['source'], json['title'], json['link']);
-        break;
-
-      case 'searchDone':
-        setStatus(resultsElement.children.isEmpty ? "No results found" : "");
+      case 'itemAdded':
+        setStatus("Item Added");
+        var lista = json['value'];
+          print(lista[0]["Cathegory"]);
+        
         break;
 
       default:
@@ -109,21 +111,8 @@ class Client {
     }
   }
 
-  void addResult(String source, String title, String link) {
-    var result = new DivElement();
-    result.children.add(new HeadingElement.h2()..innerHtml = source);
-    result.children.add(
-        new AnchorElement(href: link)
-        ..innerHtml = title
-        ..target = '_blank');
-    result.classes.add('result');
-    resultsElement.children.add(result);
-  }
-
   
 }
 
 
-void main() {
-  var client = new Client();
-}
+

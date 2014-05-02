@@ -128,11 +128,32 @@ void handleWebSocket(WebSocket webSocket) {
           db_interface.DbInterface db = new db_interface.DbInterface("127.0.0.1","conti", collection);
           db.open()
               .then((_) => db.insert([new record.Record.setter(category, cost, new DateTime(year, month, day),subCategory)]))
-              .then((_) => db.countCollection()
-                .then((value) => log.info("Count: " + value.toString())))        
+              .then((_) => db.getByDate(new DateTime(year, month),true))
+        .then((value){
+          List<Map> valList = value;          
+          Iterator i =  valList.iterator;
+          List retList = [];
+          
+          while(i.moveNext()){
+            var obj = {
+                       "Cathegory" :i.current["Cathegory"] ,
+                       "Date" :i.current["Date"].toString() ,
+                       "Subcathegory" :i.current["Subcathegory"] ,
+                       "Cost" :i.current["Cost"] };
+            retList.add(obj);
+                       
+          }
+          
+          var encoded = JSON.encode(retList);
+          var response = {
+                          'response': 'itemAdded',
+                          'value' : retList
+          };
+          webSocket.add(JSON.encode(response));
+          
+        })        
               .then((_) => db.close());
-          int done = 0;
-
+          
           break;
 
         default:
