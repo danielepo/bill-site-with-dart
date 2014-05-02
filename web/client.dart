@@ -58,6 +58,10 @@ class Client {
   void setStatus(String status) {
     statusElement.innerHtml = status;
   }
+  void setTable(String table, String action) {
+    DivElement div = querySelector('#' + action);
+    div.innerHtml = table;
+  }
   void connect() {
     connectPending = false;
     webSocket = new WebSocket('ws://${Uri.base.host}:${Uri.base.port}/ws');
@@ -101,9 +105,27 @@ class Client {
     switch (response) {
       case 'itemAdded':
         setStatus("Item Added");
-        var lista = json['value'];
-          print(lista[0]["Cathegory"]);
+        List lista = json['value'];
+        lista.sort((x,y) {
+         var a = DateTime.parse(x['Date'].toString()); 
+         var b = DateTime.parse(y['Date'].toString());
+         return a.compareTo(b);
+        });
+        Iterator i = lista.iterator;
+        var table =  '';
+        while (i.moveNext()){
+          var cat = i.current["Cathegory"].toString();
+          var subcat = i.current["Subcathegory"].toString();
+          DateTime date =DateTime.parse(i.current["Date"].toString());
+          String year = date.year.toString();
+          String month = date.month.toString();
+          String day = date.day.toString();
         
+          var cost = i.current["Cost"].toString();
+          table+= ("<tr><td>" +cat + "</td><td>" + subcat + "</td><td>" + cost + "</td><td>" + day +"</td></tr>");
+
+        }
+        setTable('<table>' + table + '<table>',json['recordType']);
         break;
 
       default:

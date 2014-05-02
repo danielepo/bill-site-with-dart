@@ -147,6 +147,7 @@ void handleWebSocket(WebSocket webSocket) {
           var encoded = JSON.encode(retList);
           var response = {
                           'response': 'itemAdded',
+                          'recordType':collection,
                           'value' : retList
           };
           webSocket.add(JSON.encode(response));
