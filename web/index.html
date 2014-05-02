@@ -2,6 +2,8 @@
 <html>
   <head>
     <meta charset="utf8">
+    <script type="application/dart" src="client.dart"></script>
+    <script src="packages/browser/dart.js"></script>
     <style type="text/css">
     body {
       font-family: helvetica;
@@ -38,22 +40,19 @@
   <body>
     <header>
       <h1>Search the Web for Dart</h1>
-      <div>Search StackOverflow and GitHub for Dart-related topics and
+      <div>Seach through StackOverflow and GitHub for Dart-related topics and
       repositories.</div>
-      <input type="text" placeholder="Category" value="" id="cat" disabled />
-      <input type="text" placeholder="Cost" value="" id="cost" disabled />
-      <input type="text" placeholder="Year" value="" id="year" disabled />
-      <input type="text" placeholder="Month" value="" id="month" disabled />
-      <input type="text" placeholder="Day" value="" id="day" disabled />
-      <input type="text" placeholder="Sub Category" value="" id="subcat" disabled />
+      <input type="text" placeholder="Cathegory" value="" id="cat" ></input>
+      <input type="text" placeholder="Sub cathegory" value="" id="subcat" ></input>
+      <input type="date" placeholder="Date" value="" id="date" ></input>
+      <input type="text" placeholder="Cost" value="" id="cost" ></input>
+      <input type="button" value = 'Submit' id='submit' disabled/>
       <div id="status"></div>
     </header>
-    <div id="results"></div>
+    <div id="results">
+    </div>
     <div class="clear"></div>
-    <footer>This app sends your search request to a server-side Dart application,
-    which forwards the request to StackOverflow and GitHub.</footer>
-
-    <script type="application/dart" src="client.dart"></script>
-    <script src="packages/browser/dart.js"></script>
+    <footer>Search-requests are sent to the server-side Dart application,
+    that will forward the requests to the invidual API providers.</footer>
   </body>
 </html>

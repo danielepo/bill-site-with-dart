@@ -11,66 +11,81 @@ class Client {
   static const Duration RECONNECT_DELAY = const Duration(milliseconds: 500);
 
   bool connectPending = false;
-  String mostRecentSearch = null;
   WebSocket webSocket;
+  
   final DivElement log = new DivElement();
-  SearchInputElement cathegory = querySelector('#cat');
-  SearchInputElement cost = querySelector('#cost');
-  SearchInputElement year = querySelector('#year');
-  SearchInputElement month = querySelector('#month');
-  SearchInputElement day = querySelector('#day');
-  SearchInputElement subCathegory = querySelector('#subcat');
+  
+  TextInputElement cathegoryElement = querySelector('#cat');
+  TextInputElement subCathegoryElement = querySelector('#subcat');
+  DateInputElement dateElement = querySelector('#date');
+  TextInputElement costElement = querySelector('#cost');
+  ButtonElement submit = querySelector('#submit');
+  
   DivElement statusElement = querySelector('#status');
   DivElement resultsElement = querySelector('#results');
 
   Client() {
-    cathegory.onChange.listen((e) {
-      search(cathegory.value);
-      cathegory.value = '';
+    submit.onClick.listen((e) {
+      insertExpence();
+      //searchElement.value = '';
     });
     connect();
   }
-
+  void insertExpence() {
+    if (cathegoryElement.value.isEmpty){
+      return; 
+    }
+    setStatus('Searching...');
+    resultsElement.children.clear();
+    var request = {
+      'request': 'add',
+      'cathegory': cathegoryElement.value,
+      'subcathegory': subCathegoryElement.value,
+      'date': dateElement.value,
+      'cost': costElement.value,
+    };
+    webSocket.send(JSON.encode(request));
+  }
+  void setStatus(String status) {
+    statusElement.innerHtml = status;
+  }
   void connect() {
     connectPending = false;
     webSocket = new WebSocket('ws://${Uri.base.host}:${Uri.base.port}/ws');
     webSocket.onOpen.first.then((_) {
       onConnected();
       webSocket.onClose.first.then((_) {
-        print("Connection disconnected to ${webSocket.url}.");
+        print("Connection disconnected to ${webSocket.url}");
         onDisconnected();
       });
     });
     webSocket.onError.first.then((_) {
       print("Failed to connect to ${webSocket.url}. "
-            "Run bin/server.dart and try again.");
+            "Please run bin/server.dart and try again.");
       onDisconnected();
     });
   }
 
   void onConnected() {
     setStatus('');
-    cathegory.disabled = false;
-    cathegory.focus();
+    submit.disabled = false;
+    cathegoryElement.focus();
     webSocket.onMessage.listen((e) {
-      handleMessage(e.data);
+      onMessage(e.data);
     });
   }
 
   void onDisconnected() {
-    if (connectPending) return;
+    if (connectPending){
+      return; 
+    }
     connectPending = true;
-    setStatus('Disconnected. Start \'bin/server.dart\' to continue.');
-    cathegory.disabled = true;
+    setStatus('Disconnected - start \'bin/server.dart\' to continue');
+    submit.disabled = true;
     new Timer(RECONNECT_DELAY, connect);
   }
-
-  void setStatus(String status) {
-    statusElement.innerHtml = status;
-  }
-
-
-  void handleMessage(data) {
+  
+  void onMessage(data) {
     var json = JSON.decode(data);
     var response = json['response'];
     switch (response) {
@@ -79,10 +94,7 @@ class Client {
         break;
 
       case 'searchDone':
-        setStatus(resultsElement.children.isEmpty
-             ? "$mostRecentSearch: No results found"
-             : "$mostRecentSearch: "
-               "${resultsElement.children.length} results found");
+        setStatus(resultsElement.children.isEmpty ? "No results found" : "");
         break;
 
       default:
@@ -101,17 +113,7 @@ class Client {
     resultsElement.children.add(result);
   }
 
-  void search(String input) {
-    if (input.isEmpty) return;
-    setStatus('Searching for $input...');
-    resultsElement.children.clear();
-    var request = {
-      'request': 'search',
-      'input': input
-    };
-    webSocket.send(JSON.encode(request));
-    mostRecentSearch = input;
-  }
+  
 }
 
 
