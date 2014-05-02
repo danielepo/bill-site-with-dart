@@ -20,6 +20,8 @@ class Client {
   DateInputElement dateElement = querySelector('#date');
   TextInputElement costElement = querySelector('#cost');
   ButtonElement submit = querySelector('#submit');
+  MonthInputElement monthElement = querySelector("#selectedMonth");
+  SelectElement direction = querySelector('#dir');
   
   DivElement statusElement = querySelector('#status');
   DivElement resultsElement = querySelector('#results');
@@ -29,16 +31,19 @@ class Client {
       insertExpence();
       //searchElement.value = '';
     });
+    dateElement.valueAsDate = new DateTime.now();
+    monthElement.valueAsDate = new DateTime.now();
     connect();
   }
   void insertExpence() {
     if (cathegoryElement.value.isEmpty){
       return; 
     }
-    setStatus('Searching...');
+    setStatus('Adding...');
     resultsElement.children.clear();
+ //   print(direction.selectedOptions.first);
     var request = {
-      'request': 'add',
+      'request': direction.selectedOptions.first.value,
       'value':{      
         'cathegory': cathegoryElement.value,
         'subcathegory': subCathegoryElement.value,

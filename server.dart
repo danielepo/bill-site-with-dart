@@ -97,8 +97,15 @@ void handleWebSocket(WebSocket webSocket) {
     .listen((json) {
       // The JSON object should contains a 'request' entry.
       var request = json['request'];
+      var collection = "outgoings";
+      
+      if (request == 'addIncoming'){
+        collection = "incomings";
+      }
+      log.info("input new expence: $request");
       switch (request) {
-        case 'add':
+        case 'addOutgoing':
+        case 'addIncoming':
           // Initiate a new search.
           String category = json['value']['cathegory'];
           String subCategory = json['value']['subcathegory'];
@@ -112,13 +119,13 @@ void handleWebSocket(WebSocket webSocket) {
           int day = int.parse(splittedDate.elementAt(2));
           
           
-          log.info("input new expence");
+          
           log.info("Cathegory: $category");
           log.info("Sub Cathegory: $subCategory");
           log.info("Date: $date");
           log.info("Cost: $cost");
           
-          db_interface.DbInterface db = new db_interface.DbInterface("127.0.0.1","test1");
+          db_interface.DbInterface db = new db_interface.DbInterface("127.0.0.1","conti", collection);
           db.open()
               .then((_) => db.insert([new record.Record.setter(category, cost, new DateTime(year, month, day),subCategory)]))
               .then((_) => db.countCollection()
