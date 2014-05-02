@@ -1,3 +1,4 @@
+library record;
 class Record{
   String cathegory;
   String subCathegory;

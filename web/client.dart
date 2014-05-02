@@ -39,10 +39,12 @@ class Client {
     resultsElement.children.clear();
     var request = {
       'request': 'add',
-      'cathegory': cathegoryElement.value,
-      'subcathegory': subCathegoryElement.value,
-      'date': dateElement.value,
-      'cost': costElement.value,
+      'value':{      
+        'cathegory': cathegoryElement.value,
+        'subcathegory': subCathegoryElement.value,
+        'date': dateElement.value,
+        'cost': costElement.value
+        }
     };
     webSocket.send(JSON.encode(request));
   }

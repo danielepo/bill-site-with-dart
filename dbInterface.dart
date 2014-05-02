@@ -1,3 +1,4 @@
+library db_interface;
 import 'package:mongo_dart/mongo_dart.dart';
 import 'dart:async' show Future;
 import 'record.dart';

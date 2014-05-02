@@ -8,9 +8,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import "record.dart" as record;
 import 'package:http_server/http_server.dart' as http_server;
 import 'package:route/server.dart' show Router;
 import 'package:logging/logging.dart' show Logger, Level, LogRecord;
+import "dbinterface.dart" as db_interface;
 
 
 final Logger log = new Logger('DartiverseSearch');
@@ -98,8 +100,30 @@ void handleWebSocket(WebSocket webSocket) {
       switch (request) {
         case 'add':
           // Initiate a new search.
-          var input = json['cat'];
-          log.info("Searching for '$input'");
+          String category = json['value']['cathegory'];
+          String subCategory = json['value']['subcathegory'];
+          double cost = double.parse(json['value']['cost']);
+          String date = json['value']['date'];
+          
+          List<String> splittedDate = date.split("-");
+          
+          int year = int.parse(splittedDate.elementAt(0));
+          int month = int.parse(splittedDate.elementAt(1));
+          int day = int.parse(splittedDate.elementAt(2));
+          
+          
+          log.info("input new expence");
+          log.info("Cathegory: $category");
+          log.info("Sub Cathegory: $subCategory");
+          log.info("Date: $date");
+          log.info("Cost: $cost");
+          
+          db_interface.DbInterface db = new db_interface.DbInterface("127.0.0.1","test1");
+          db.open()
+              .then((_) => db.insert([new record.Record.setter(category, cost, new DateTime(year, month, day),subCategory)]))
+              .then((_) => db.countCollection()
+                .then((value) => log.info("Count: " + value.toString())))        
+              .then((_) => db.close());
           int done = 0;
 
           break;
