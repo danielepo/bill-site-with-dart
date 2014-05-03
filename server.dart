@@ -156,7 +156,44 @@ void handleWebSocket(WebSocket webSocket) {
               .then((_) => db.close());
           
           break;
-
+        case 'getTable':
+          collection = json['collection'];
+          String date = json['date'];
+          List<String> splittedDate = date.split("-");
+          int year = int.parse(splittedDate.elementAt(0));
+          int month = int.parse(splittedDate.elementAt(1));
+          
+          db_interface.DbInterface db = new db_interface.DbInterface("127.0.0.1","conti", collection);
+          db.open()
+            
+              .then((_) => db.getByDate(new DateTime(year, month),true))
+        .then((value){
+          List<Map> valList = value;          
+          Iterator i =  valList.iterator;
+          List retList = [];
+          
+          while(i.moveNext()){
+            var obj = {
+                       "Cathegory" :i.current["Cathegory"] ,
+                       "Date" :i.current["Date"].toString() ,
+                       "Subcathegory" :i.current["Subcathegory"] ,
+                       "Cost" :i.current["Cost"] };
+            retList.add(obj);
+                       
+          }
+          
+          var encoded = JSON.encode(retList);
+          var response = {
+                          'response': 'getTable',
+                          'recordType':collection,
+                          'value' : retList
+          };
+          webSocket.add(JSON.encode(response));
+          
+        })        
+              .then((_) => db.close());
+          
+          break;
         default:
           log.warning("Invalid request '$request'.");
       }

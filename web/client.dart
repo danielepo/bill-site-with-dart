@@ -22,6 +22,8 @@ class Client {
   DateInputElement dateElement = querySelector('#date');
   TextInputElement costElement = querySelector('#cost');
   ButtonElement submit = querySelector('#submit');
+  ButtonElement updateTables = querySelector("#update_tables");
+  
   MonthInputElement monthElement = querySelector("#selectedMonth");
   SelectElement direction = querySelector('#dir');
   
@@ -33,6 +35,7 @@ class Client {
       insertTransaction();
       //searchElement.value = '';
     });
+    updateTables.onClick.listen((e) => getTables());
     dateElement.valueAsDate = new DateTime.now();
     monthElement.valueAsDate = new DateTime.now();
     connect();
@@ -54,6 +57,21 @@ class Client {
         }
     };
     webSocket.send(JSON.encode(request));
+  }
+  void getTables() {
+  
+      setStatus('Reading Tables...');
+      List<String> tables = ['outgoings', 'incomings'];
+      tables.forEach((e){
+        var request = {
+                       'request': "getTable",
+                       'collection':e,
+                       'date' : monthElement.valueAsDate.toString()
+        };
+        webSocket.send(JSON.encode(request));
+      });
+      
+    
   }
   void setStatus(String status) {
     statusElement.innerHtml = status;
@@ -83,6 +101,7 @@ class Client {
     setStatus('');
     submit.disabled = false;
     cathegoryElement.focus();
+    getTables();
     webSocket.onMessage.listen((e) {
       onMessage(e.data);
     });
@@ -105,6 +124,9 @@ class Client {
     switch (response) {
       case 'itemAdded':
         setStatus("Item Added");
+        
+      break;
+      case 'getTable':
         List lista = json['value'];
         lista.sort((x,y) {
          var a = DateTime.parse(x['Date'].toString()); 
