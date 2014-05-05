@@ -22,33 +22,43 @@ class TablesManager {
       
     
   }
-  printTable(List lista, String recordType){
+  
+  void printTable(List lista, String recordType){
 
-    lista.sort((x,y) {
-      var a = DateTime.parse(x['Date'].toString()); 
-      var b = DateTime.parse(y['Date'].toString());
-      return a.compareTo(b);
-    });
+    lista.sort((x,y) => _sortByDate(x, y));
+    
+    TableElement table = new TableElement();
+    
     Iterator listIterator = lista.iterator;
+    TableRowElement head = table.createTHead().addRow();
+    head.addCell().text = "Day";
+    head.addCell().text = "Cathegory";
+    head.addCell().text = "Sub Cathegory";
+    head.addCell().text = "Cost";
+
+    TableSectionElement body = table.createTBody();
     var rows =  '';
     while (listIterator.moveNext()){
       var tableRow = listIterator.current;
       
-      var cat = tableRow["Cathegory"].toString();
-      var subcat = tableRow["Subcathegory"].toString();
-      DateTime date =DateTime.parse(tableRow["Date"].toString());
-      String year = date.year.toString();
-      String month = date.month.toString();
-      String day = date.day.toString();
-      
-      var cost = tableRow["Cost"].toString();
-      rows+= ("<tr><td>" +cat + "</td><td>" + subcat + "</td><td>" + cost + "</td><td>" + day +"</td></tr>");
+      String cat = tableRow["Cathegory"].toString();
+      String subcat = tableRow["Subcathegory"].toString();     
+      String day = DateTime.parse(tableRow["Date"].toString()).day.toString();
+      String cost = tableRow["Cost"].toString();
+      TableRowElement row = body.addRow();
+      row.addCell().text = day;
+      row.addCell().text = cat;
+      row.addCell().text = subcat;
+      row.addCell().text = cost;
 
     }
-    _setTable('<table>' + rows + '<table>',recordType);
+    client.setTable(table,recordType);
   }
-  void _setTable(String table, String action) {
-    DivElement div = querySelector('#' + action);
-    div.innerHtml = table;
+  
+  
+  int _sortByDate(x,y){
+    var a = DateTime.parse(x['Date'].toString()); 
+    var b = DateTime.parse(y['Date'].toString());
+    return a.compareTo(b);
   }
 }

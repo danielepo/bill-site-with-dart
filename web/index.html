@@ -10,10 +10,12 @@
   </head>
   <body>
     <header>
-      <h1>Search the Web for Dart</h1>
-      <div>Seach through StackOverflow and GitHub for Dart-related topics and
-      repositories.</div>
-      <select id='dir'>
+      <h1>Daniele's Bill Site</h1>
+
+      
+    </header>
+    <section id="results">
+    <select id='dir'>
         <option value = 'addOutgoing'>Output</option>
         <option value = 'addIncoming'>Input</option>
       </select>
@@ -23,19 +25,17 @@
       <input type="text" placeholder="Cost" value="" id="cost" ></input>
       <input type="button" value = 'Submit' id='submit' disabled/>
       <div id="status"></div>
-    </header>
-    <div id="results">
-    </div>
-    <div id="tables">
+    
+    </section>
+    <section id="tables">
     <input type='month' id='selectedMonth' ></input>
     <input type='button' id='update_tables' value='Update Tables'></input>
     <div id='outgoings'>
     </div>
     <div id='incomings'>
     </div>
-    </div>
+    </section>
     <div class="clear"></div>
-    <footer>Search-requests are sent to the server-side Dart application,
-    that will forward the requests to the invidual API providers.</footer>
+    <footer></footer>
   </body>
 </html>

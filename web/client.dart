@@ -35,6 +35,8 @@ class Client {
   tM.TransactionManager transact ;
   TablesManager tabelsMan;
   Client() {
+    ServerConnector c = new ServerConnector(this);
+    webSocket = c.connect();
     transact = new tM.TransactionManager(webSocket,this);
     tabelsMan = new TablesManager(webSocket,this);
     
@@ -46,9 +48,9 @@ class Client {
     dateElement.valueAsDate = new DateTime.now();
     monthElement.valueAsDate = new DateTime.now();
     
-    ServerConnector c = new ServerConnector(this);
     
-    webSocket = c.connect();
+    
+    
   }
   
   
@@ -60,6 +62,10 @@ class Client {
     cathegoryElement.value='';
     subCathegoryElement.value='';
     costElement.value='';
+  }
+  void setTable(TableElement table, String action) {
+    DivElement div = querySelector('#' + action);
+    div.nodes.add(table);
   }
   
 }

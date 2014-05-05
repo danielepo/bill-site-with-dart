@@ -18,6 +18,7 @@ class ServerConnector{
   
   WebSocket connect() {
     connectPending = false;
+    print('ws://${Uri.base.host}:${Uri.base.port}/ws');
     webSocket = new WebSocket('ws://${Uri.base.host}:${Uri.base.port}/ws');
     webSocket.onOpen.first.then((_) {
       onConnected();
