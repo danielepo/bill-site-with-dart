@@ -35,6 +35,7 @@ class Client {
   tM.TransactionManager transact ;
   TablesManager tabelsMan;
   Client() {
+    submit.disabled = true;
     ServerConnector c = new ServerConnector(this);
     webSocket = c.connect();
     transact = new tM.TransactionManager(webSocket,this);
@@ -47,13 +48,29 @@ class Client {
     updateTables.onClick.listen((e) => tabelsMan.getTables());
     dateElement.valueAsDate = new DateTime.now();
     monthElement.valueAsDate = new DateTime.now();
+  
+    cathegoryElement
+    ..onKeyUp.listen((e) => areValid())
+    ..onChange.listen((e) => areValid());
     
+    subCathegoryElement
+    ..onKeyUp.listen((e) => areValid())
+    ..onChange.listen((e) => areValid());
     
-    
-    
+    costElement
+      ..onKeyUp.listen((e) => areValid())
+      ..onChange.listen((e) => areValid());
   }
   
-  
+  void areValid(){
+    if(cathegoryElement.value.isEmpty || 
+        subCathegoryElement.value.isEmpty || costElement.value.isEmpty){
+      submit.disabled = true;
+    }
+    else{
+      submit.disabled = false;
+    }
+  }
   void setStatus(String status) {
     statusElement.innerHtml = status;
   }
