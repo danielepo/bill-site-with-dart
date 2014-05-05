@@ -1,0 +1,30 @@
+body {
+      font-family: helvetica;
+    }
+    h2 {
+      font-size: 14pt;
+    }
+    header, footer {
+      margin: 50px;
+      text-align: center;
+    }
+    #results {
+      margin: auto;
+      width: 750px;
+    }
+    div {
+      margin: 20px;
+    }
+    .clear {
+      clear: both;
+    }
+    .result {
+      margin: 10px;
+      padding: 10px;
+      height: 158px;
+      width: 208px;
+      float: left;
+      border: 1px solid gray;
+      border-radius: 4px;
+      font-size: 10pt;
+    }
