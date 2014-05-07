@@ -110,6 +110,11 @@ void _handleWebSocket(WebSocket webSocket) {
           _returnTables(json,webSocket);
           
           break;
+
+        case 'getCathegories':
+          _returnCathegories(collection,webSocket);
+          
+          break;
         default:
           log.warning("Invalid request '$request'.");
       }
@@ -138,7 +143,7 @@ void _addTransaction(json,collection){
   
   db_interface.DbInterface db = new db_interface.DbInterface("127.0.0.1","conti", collection);
   db.open()
-    .then((_) => db.insert([new record.Record.setter(category, cost, new DateTime(year, month, day),subCategory)]))
+    .then((_) => db.insert([new record.Record.setter(category.toLowerCase(), cost, new DateTime(year, month, day),subCategory.toLowerCase())]))
      
       .then((_) => db.close());
 }
@@ -181,5 +186,31 @@ void _returnTables(json, WebSocket webSocket){
   var response = {
                   'response': 'done'
   };
+  webSocket.add(JSON.encode(response));
+}
+
+void _returnCathegories( var collection, WebSocket webSocket){
+
+  db_interface.DbInterface db = new db_interface.DbInterface("127.0.0.1","conti", collection);
+  db.open()
+  
+    .then((_) => db.getAllCathegoires())
+      .then((value){
+
+        List val =value["values"];
+        val.sort((x,y) => x.compareTo(y));
+        log.info( JSON.encode(val));
+
+        var response = {
+                        'response': 'getCathegories',
+                        'recordType':collection,
+                        'value' : JSON.encode(val)
+        };
+        webSocket.add(JSON.encode(response));
+        
+      })        
+        .then((_) => db.close());
+  var response = {'response': 'done'};
+  
   webSocket.add(JSON.encode(response));
 }

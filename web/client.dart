@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:html';
+import 'dart:convert';
 
 import '../lib/serverConnector.dart';
 import '../lib/tablesManager.dart';
@@ -20,7 +21,7 @@ class Client {
   
   final DivElement log = new DivElement();
   
-  TextInputElement cathegoryElement = querySelector('#cat');
+  SelectElement cathegoryElement = querySelector('#cat');
   TextInputElement subCathegoryElement = querySelector('#subcat');
   DateInputElement dateElement = querySelector('#date');
   TextInputElement costElement = querySelector('#cost');
@@ -43,6 +44,7 @@ class Client {
     
     submit.onClick.listen((e) {
       transact.insertTransaction();
+      getCathegories();
     });
     
     updateTables.onClick.listen((e) => tabelsMan.getTables());
@@ -84,7 +86,14 @@ class Client {
     DivElement div = querySelector('#' + action);
     div.nodes.add(table);
   }
-  
+  void getCathegories(){
+    var request = {
+                   'request': "getCathegories",
+                   "collection": direction.selectedOptions.first.value
+                   
+    };
+    webSocket.send(JSON.encode(request));
+  }
 }
 
 

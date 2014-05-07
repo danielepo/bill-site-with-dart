@@ -4,9 +4,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'tablesManager.dart';
-
+import '../web/client.dart';
 class ServerConnector{
-  var client;
+  Client client;
   
   static const Duration RECONNECT_DELAY = const Duration(milliseconds: 500);
   
@@ -43,8 +43,11 @@ class ServerConnector{
     webSocket.onMessage.listen((e) {
       onMessage(e.data);
     });
+    client.getCathegories();
   }
-
+  
+  
+  
   void onDisconnected() {
     if (connectPending){
       return; 
@@ -66,6 +69,15 @@ class ServerConnector{
       break;
       case 'getTable':
         tm.printTable(json['value'],json['recordType']);
+        break;
+      case 'getCathegories':
+        SelectElement sel = client.cathegoryElement;
+        Iterator cathegories = JSON.decode(json['value']).iterator;
+        
+        while(cathegories.moveNext()){
+          var cathegory = cathegories.current;
+          sel.nodes.add(new OptionElement(data:cathegory, value: cathegory));
+        }
         break;
       case 'done':
         client.setStatus("Done");
