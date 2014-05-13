@@ -18,9 +18,11 @@ class Client {
 
   
   WebSocket webSocket;
+  List<String> cathegories;
   
   final DivElement log = new DivElement();
   
+  TextInputElement catFilterElement = querySelector('#cat_filter');
   SelectElement cathegoryElement = querySelector('#cat');
   TextInputElement subCathegoryElement = querySelector('#subcat');
   DateInputElement dateElement = querySelector('#date');
@@ -62,8 +64,27 @@ class Client {
     costElement
       ..onKeyUp.listen((e) => areValid())
       ..onChange.listen((e) => areValid());
+    
+    catFilterElement
+        ..onKeyUp.listen((e) => updateCathegories())
+        ..onChange.listen((e) => updateCathegories());
   }
-  
+  void updateCathegories(){
+    SelectElement sel = cathegoryElement;
+    String catFilter = catFilterElement.value;
+     Iterator cathegoriesIt = cathegories.iterator;
+     
+     while(cathegoriesIt.moveNext()){
+       var cathegory = cathegoriesIt.current;
+       if(catFilter.isEmpty){
+         sel.nodes.add(new OptionElement(data:cathegory, value: cathegory));
+       }else{
+         if(cathegory.indexOf(catFilter) != -1){
+            sel.nodes.add(new OptionElement(data:cathegory, value: cathegory));
+         }
+       }
+     }
+  }
   void areValid(){
     if(cathegoryElement.value.isEmpty || 
         subCathegoryElement.value.isEmpty || costElement.value.isEmpty){

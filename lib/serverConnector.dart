@@ -72,10 +72,11 @@ class ServerConnector{
         break;
       case 'getCathegories':
         SelectElement sel = client.cathegoryElement;
-        Iterator cathegories = JSON.decode(json['value']).iterator;
+        client.cathegories = JSON.decode(json['value']);
+        Iterator cathegoriesIt = cathegories.iterator;
         
-        while(cathegories.moveNext()){
-          var cathegory = cathegories.current;
+        while(cathegoriesIt.moveNext()){
+          var cathegory = cathegoriesIt.current;
           sel.nodes.add(new OptionElement(data:cathegory, value: cathegory));
         }
         break;
